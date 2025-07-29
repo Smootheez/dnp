@@ -1,0 +1,15 @@
+{
+  "config.screen.dnp.title": "Damage Number Particles",
+
+  "config.option.dnp.enableDnp": "Enable Damage Number Particles",
+  "config.option.dnp.enableDnp.description": "Toggle the display of damage number particles.",
+
+  "config.option.dnp.selfParticles": "Hide Self Particles",
+  "config.option.dnp.selfParticles.description": "Hide damage particles on your own character.",
+
+  "config.option.dnp.healing": "Show Healing Particles",
+  "config.option.dnp.healing.description": "Display particles when healing occurs.",
+
+  "config.option.dnp.damageThreshold": "High Damage Threshold",
+  "config.option.dnp.damageThreshold.description": "Minimum damage required to be considered high damage."
+}
