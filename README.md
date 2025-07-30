@@ -6,7 +6,7 @@
 
 ## 🔍 Preview
 
-![Damage Number Particles Preview](https://raw.githubusercontent.com/Smootheez/dnp/refs/heads/master/assets/gif/damage_particle_preview.gif?token=GHSAT0AAAAAADFSNRS5UCXTZNHEQRNEN4VQ2EJPSOA)
+![Damage Number Particles Preview](https://raw.githubusercontent.com/Smootheez/dnp/refs/heads/master/assets/gif/damage_particle_preview.gif?token=GHSAT0AAAAAADFSNRS5P4ZX66YLCHQSXH2A2EJUFPA)
 
 Watch in-game damage and healing numbers appear around entities in real time.
 
