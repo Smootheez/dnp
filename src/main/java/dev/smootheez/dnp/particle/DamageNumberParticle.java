@@ -1,6 +1,7 @@
 package dev.smootheez.dnp.particle;
 
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.*;
@@ -9,92 +10,69 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.*;
-import org.joml.*;
 
-// Custom particle for rendering floating damage/healing numbers above entities
 public class DamageNumberParticle extends Particle {
-    private String damageDealt;         // Text to render (e.g., "10", "+5")
-    private float initialScale;         // Base size of the particle
-    private int color = 0xFFFFFF;       // Default color: white
+    private final String text;
+    private final float initialScale;
+    private final int color;
 
-    // Constructor: initializes the particle's position and motion
-    public DamageNumberParticle(ClientLevel level, Vec3 position, Vec3 velocity) {
-        super(level, position.x, position.y, position.z, velocity.x, velocity.y, velocity.z);
-        this.lifetime = 40;  // Particle lasts 40 ticks (2 seconds at 20 TPS)
-        this.age = 0;        // Start age
-        this.gravity = 0.0F; // No gravity effect (it floats)
+    public DamageNumberParticle(ClientLevel level, Vec3 pos, Vec3 velocity, String text, float initialScale, int color) {
+        super(level, pos.x, pos.y, pos.z, velocity.x, velocity.y, velocity.z);
+        this.text = text;
+        this.initialScale = initialScale;
+        this.color = color;
+        this.gravity = 0;
+        this.lifetime = 30;
     }
 
-    // Called every frame to render the particle
     @Override
     public void render(VertexConsumer vertexConsumer, Camera camera, float partialTicks) {
+        Vec3 cameraPos = camera.getPosition();
+
+        float x = (float) (this.xo + (this.x - this.xo) * partialTicks - cameraPos.x());
+        float y = (float) (this.yo + (this.y - this.yo) * partialTicks - cameraPos.y());
+        float z = (float) (this.zo + (this.z - this.zo) * partialTicks - cameraPos.z());
+
         Minecraft mc = Minecraft.getInstance();
-        Font font = mc.font; // Get Minecraft's font renderer
+        Font font = mc.font;
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
-        // Calculate interpolated world position relative to camera
-        float x = (float) (this.xo + (this.x - this.xo) * partialTicks - camera.getPosition().x());
-        float y = (float) (this.yo + (this.y - this.yo) * partialTicks - camera.getPosition().y());
-        float z = (float) (this.zo + (this.z - this.zo) * partialTicks - camera.getPosition().z());
-
-        // Setup pose stack for rendering
         PoseStack poseStack = new PoseStack();
         poseStack.pushPose();
-        poseStack.translate(x, y, z);         // Move to particle position
-        poseStack.mulPose(camera.rotation()); // Face toward the camera (billboarding)
-        poseStack.scale(-initialScale, -initialScale, initialScale); // Scale and flip to face player
+        poseStack.translate(x, y, z);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-camera.getYRot()));
+        poseStack.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
+        poseStack.scale(-initialScale, -initialScale, initialScale);
 
-        Matrix4f matrix = poseStack.last().pose(); // Get the transformation matrix
-        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource(); // Get buffer for rendering
+        // Alpha fading
+        float alpha = 1.0f - (float) age / lifetime;
+        alpha = Mth.clamp(alpha, 0.0f, 1.0f);
 
-        // Compute alpha fade out near end of lifetime
-        float progress = (float) age / (float) lifetime;
-        float alphaF = progress < 0.75F ? 1.0F : 1.0F - ((progress - 0.75F) / 0.25F); // Fade only in last 25%
-        int alpha = (int) (Mth.clamp(alphaF, 0.0F, 1.0F) * 255) << 24;                // Convert alpha to ARGB
-        int packedLight = 0xF000F0;                                                  // Full brightness
-        int finalColor = alpha | (color & 0xFFFFFF);                                 // Combine alpha and RGB
+        // Compose ARGB color with fading alpha
+        int a = (int) (alpha * 255.0f) << 24;
+        int rgb = color & 0x00FFFFFF;
+        int argbWithAlpha = a | rgb;
 
-        // Center text horizontally
-        float textX = -font.width(damageDealt) / 2f;
+        font.drawInBatch(
+                text,
+                -font.width(text) / 2f,
+                0,
+                argbWithAlpha,
+                false,
+                poseStack.last().pose(),
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
 
-        // Draw the text (the damage number)
-        font.drawInBatch(damageDealt, textX, 0, finalColor, false, matrix, bufferSource, Font.DisplayMode.NORMAL, 0, packedLight);
-
-        poseStack.popPose();    // Restore pose stack
-        bufferSource.endBatch(); // Flush the text render buffer
+        poseStack.popPose();
+        bufferSource.endBatch();
     }
 
-    // Called every tick to update the particle's state
-    @Override
-    public void tick() {
-        super.tick();
-        this.age++;         // Increment particle age
-        this.yd += 0.001;   // Slight upward movement every tick (smooth rise)
-
-        // Remove the particle once it exceeds its lifetime
-        if (this.age >= this.lifetime) {
-            this.remove();
-        }
-    }
-
-    // Specify that we are using a custom render type (not the default particle system)
     @Override
     public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderType.CUSTOM;
-    }
-
-    // Set the number text to display
-    public void setDamageDealt(@NotNull String damageDealt) {
-        this.damageDealt = damageDealt;
-    }
-
-    // Set the RGB color of the text (alpha handled during render)
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    // Set the size scale of the particle text
-    public void setInitialScale(float initialScale) {
-        this.initialScale = initialScale;
     }
 }
 
