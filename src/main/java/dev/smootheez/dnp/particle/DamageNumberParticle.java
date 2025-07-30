@@ -20,7 +20,7 @@ public class DamageNumberParticle extends Particle {
     // Constructor: initializes the particle's position and motion
     public DamageNumberParticle(ClientLevel level, Vec3 position, Vec3 velocity) {
         super(level, position.x, position.y, position.z, velocity.x, velocity.y, velocity.z);
-        this.lifetime = 40;  // Particle lasts 40 ticks (2 seconds at 20 TPS)
+        this.lifetime = 20;  // Particle lasts 20 ticks (1 seconds at 20 TPS)
         this.age = 0;        // Start age
         this.gravity = 0.0F; // No gravity effect (it floats)
     }
@@ -48,16 +48,19 @@ public class DamageNumberParticle extends Particle {
 
         // Compute alpha fade out near end of lifetime
         float progress = (float) age / (float) lifetime;
-        float alphaF = progress < 0.75F ? 1.0F : 1.0F - ((progress - 0.75F) / 0.25F); // Fade only in last 25%
-        int alpha = (int) (Mth.clamp(alphaF, 0.0F, 1.0F) * 255) << 24;                // Convert alpha to ARGB
-        int packedLight = 0xF000F0;                                                  // Full brightness
-        int finalColor = alpha | (color & 0xFFFFFF);                                 // Combine alpha and RGB
+        float fadeProgress = Mth.clamp((progress - 0.75F) / 0.25F, 0.0F, 1.0F);
+        float alphaF = 1.0F - fadeProgress * fadeProgress;
+        alphaF = Mth.clamp(alphaF, 0.05F, 1.0F); // Avoid blinking at end
+        int alpha = (int) (alphaF * 255) << 24;
+        int finalColor = alpha | (color & 0xFFFFFF);
+        int packedLight = 0xF000F0;
 
         // Center text horizontally
         float textX = -font.width(damageDealt) / 2f;
 
         // Draw the text (the damage number)
-        font.drawInBatch(damageDealt, textX, 0, finalColor, false, matrix, bufferSource, Font.DisplayMode.NORMAL, 0, packedLight);
+        font.drawInBatch(damageDealt, textX, 0, finalColor, false, matrix, bufferSource, Font.DisplayMode.NORMAL, 0x00000000, packedLight);
+
 
         poseStack.popPose();    // Restore pose stack
         bufferSource.endBatch(); // Flush the text render buffer
@@ -67,13 +70,7 @@ public class DamageNumberParticle extends Particle {
     @Override
     public void tick() {
         super.tick();
-        this.age++;         // Increment particle age
         this.yd += 0.001;   // Slight upward movement every tick (smooth rise)
-
-        // Remove the particle once it exceeds its lifetime
-        if (this.age >= this.lifetime) {
-            this.remove();
-        }
     }
 
     // Specify that we are using a custom render type (not the default particle system)
