@@ -4,7 +4,33 @@
 
 ---
 
+## 🔍 Preview
+
+![Damage Number Particles Preview](https://raw.githubusercontent.com/Smootheez/dnp/refs/heads/master/assets/gif/damage_particle_preview.gif?token=GHSAT0AAAAAADFSNRS5UCXTZNHEQRNEN4VQ2EJPSOA)
+
+Watch in-game damage and healing numbers appear around entities in real time.
+
+---
+
 ## ⚙️ Configuration
+
+You can customize the mod via the in-game config menu, including:
+
+* Enabling/disabling healing or self particles
+* Adjusting particle radius, and damage threshold
+* Managing a **blacklist** to exclude specific entities from showing particles
+
+To blacklist an entity, add its identifier using the format:
+
+```
+id:entity_identifier
+```
+
+For example:
+
+```
+minecraft:allay
+```
 
 You can configure all features easily:
 - In-game via the config menu *(requires ModMenu)*
