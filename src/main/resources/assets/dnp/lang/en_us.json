@@ -14,5 +14,8 @@
   "config.option.dnp.damageThreshold.description": "Minimum damage required to be considered high damage.",
 
   "config.option.dnp.particleRadius": "Particle Radius",
-  "config.option.dnp.particleRadius.description": "The maximum distance from the entity where damage number particles will appear."
+  "config.option.dnp.particleRadius.description": "The maximum distance from the player where damage number particles will appear.",
+
+  "config.option.dnp.blacklist": "Blacklist",
+  "config.option.dnp.blacklist.description": "Entity IDs to ignore for damage number particles."
 }
