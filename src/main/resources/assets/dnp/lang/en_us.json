@@ -11,5 +11,8 @@
   "config.option.dnp.healing.description": "Display particles when healing occurs.",
 
   "config.option.dnp.damageThreshold": "High Damage Threshold",
-  "config.option.dnp.damageThreshold.description": "Minimum damage required to be considered high damage."
+  "config.option.dnp.damageThreshold.description": "Minimum damage required to be considered high damage.",
+
+  "config.option.dnp.particleRadius": "Particle Radius",
+  "config.option.dnp.particleRadius.description": "The maximum distance from the entity where damage number particles will appear."
 }
