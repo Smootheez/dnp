@@ -26,18 +26,16 @@ public class DamageNumberParticle extends Particle {
     }
 
     @Override
-    public void render(VertexConsumer vertexConsumer, Camera camera, float partialTicks) {
+    public void renderCustom(PoseStack poseStack, MultiBufferSource multiBufferSource, Camera camera, float f) {
         Vec3 cameraPos = camera.getPosition();
 
-        float x = (float) (this.xo + (this.x - this.xo) * partialTicks - cameraPos.x());
-        float y = (float) (this.yo + (this.y - this.yo) * partialTicks - cameraPos.y());
-        float z = (float) (this.zo + (this.z - this.zo) * partialTicks - cameraPos.z());
+        float x = (float) (this.xo + (this.x - this.xo) * f - cameraPos.x());
+        float y = (float) (this.yo + (this.y - this.yo) * f - cameraPos.y());
+        float z = (float) (this.zo + (this.z - this.zo) * f - cameraPos.z());
 
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;
-        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
-        PoseStack poseStack = new PoseStack();
         poseStack.pushPose();
         poseStack.translate(x, y, z);
         poseStack.mulPose(Axis.YP.rotationDegrees(-camera.getYRot()));
@@ -60,14 +58,18 @@ public class DamageNumberParticle extends Particle {
                 argbWithAlpha,
                 false,
                 poseStack.last().pose(),
-                bufferSource,
+                multiBufferSource,
                 Font.DisplayMode.NORMAL,
                 0,
                 0xF000F0
         );
 
         poseStack.popPose();
-        bufferSource.endBatch();
+    }
+
+    @Override
+    public void render(VertexConsumer vertexConsumer, Camera camera, float partialTicks) {
+        // Do nothing
     }
 
     @Override
