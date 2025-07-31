@@ -28,7 +28,8 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "com.github.Smootheez:scl:${project.scl_version}"
+    modCompileOnly "com.github.Smootheez:scl:${project.scl_version}"
+    modLocalRuntime "com.github.Smootheez:scl:${project.scl_version}"
 
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
     modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
