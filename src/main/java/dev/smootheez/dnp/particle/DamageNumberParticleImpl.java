@@ -1,6 +1,7 @@
 package dev.smootheez.dnp.particle;
 
 import dev.smootheez.dnp.config.*;
+import net.fabricmc.api.*;
 import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.*;
 import net.minecraft.client.player.*;
@@ -12,6 +13,7 @@ import net.minecraft.world.phys.*;
 
 import java.util.*;
 
+@Environment(EnvType.CLIENT)
 public class DamageNumberParticleImpl implements DamageNumberParticleContract {
     private final Deque<DamageNumberParticle> particles = new ArrayDeque<>();
 
