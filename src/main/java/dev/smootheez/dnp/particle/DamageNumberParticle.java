@@ -2,6 +2,7 @@ package dev.smootheez.dnp.particle;
 
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.*;
+import net.fabricmc.api.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.*;
@@ -11,6 +12,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.*;
 
+@Environment(EnvType.CLIENT)
 public class DamageNumberParticle extends Particle {
     private final String text;
     private final float initialScale;
