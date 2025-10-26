@@ -1,4 +1,0 @@
-- Add damage particle when entity is hurt
-- Add healing particle when entity is healed
-- Add option to hide self particles
-- Add threshold for high damage
