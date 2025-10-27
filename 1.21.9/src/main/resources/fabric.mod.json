@@ -26,6 +26,12 @@
       "io.github.smootheez.dnp.config.DnpConfig"
     ]
   },
+  "mixins": [
+    {
+      "config": "dnp.client.mixins.json",
+      "environment": "client"
+    }
+  ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",
     "minecraft": ">=${minecraftVersion}",
