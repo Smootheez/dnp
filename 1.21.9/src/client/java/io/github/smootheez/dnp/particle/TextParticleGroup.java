@@ -10,8 +10,8 @@ import net.minecraft.client.renderer.state.*;
 import org.jetbrains.annotations.*;
 
 @Environment(EnvType.CLIENT)
-public class NumberParticleGroup extends ParticleGroup<NumberParticle> {
-    public NumberParticleGroup(ParticleEngine particleEngine) {
+public class TextParticleGroup extends ParticleGroup<TextParticle> {
+    public TextParticleGroup(ParticleEngine particleEngine) {
         super(particleEngine);
     }
 
@@ -20,8 +20,9 @@ public class NumberParticleGroup extends ParticleGroup<NumberParticle> {
         return (submitNodeCollector, cameraRenderState) -> {
             DebugMode.sendLoggerInfo("Rendering NumberParticleGroup");
             Minecraft instance = Minecraft.getInstance();
+            PoseStack poseStack = new PoseStack();
             this.particles.forEach(particle -> {
-                particle.extract(instance.renderBuffers().bufferSource(), new PoseStack(), instance.font, camera, f);
+                particle.extract(instance.renderBuffers().bufferSource(), poseStack, instance.font, camera, f);
                 DebugMode.sendLoggerInfo("Rendering particle: " + particle);
             });
         };

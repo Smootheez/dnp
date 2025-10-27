@@ -11,14 +11,19 @@ import net.minecraft.world.phys.*;
 import java.util.*;
 
 @Environment(EnvType.CLIENT)
-public class RenderDamageNumber {
-    private final Minecraft minecraft = Minecraft.getInstance();
-    private final Deque<NumberParticle> particles = new ArrayDeque<>();
+public final class RenderDamageNumber {
+    private RenderDamageNumber() {}
 
-    public void renderParticleNumber(LivingEntity entity, float oldHealth, float newHealth) {
+    private static final Minecraft MINECRAFT = Minecraft.getInstance();
+    private static final Deque<TextParticle> PARTICLES = new ArrayDeque<>();
+
+    public static void renderParticleNumber(LivingEntity entity, float oldHealth, float newHealth) {
         ClientLevel level = (ClientLevel) entity.level();
 
-        double yOffset = Mth.clamp(entity.getBbHeight() * 0.55, 1.0, 4.0);
+        ensureParticleLimit();
+
+        float bbHeight = entity.getBbHeight();
+        double yOffset = Mth.clamp(bbHeight * 0.55, 1.0, 4.0);
         Vec3 position = entity.position().add(0.0, yOffset, 0.0);
         Vec3 velocity = computeVelocity(level, entity, position);
 
@@ -26,17 +31,76 @@ public class RenderDamageNumber {
         if (diff == 0) return;
 
         float baseScale = 0.02F;
-        float scaleMultiplier = Mth.sqrt(entity.getBbHeight());
+        float scaleMultiplier = Mth.sqrt(bbHeight);
         float scaled = baseScale * scaleMultiplier;
 
-        NumberParticle particle = new NumberParticle(level, position, velocity,
-                String.format("%.0f", Math.abs(diff)), Mth.clamp(scaled, 0.02F, 0.045F));
+        // ----- Dynamic Color Computation -----
+        float amount = Math.abs(diff);
+        float maxChange = 10.0F; // you can adjust this threshold for your mod
+        float intensity = Mth.clamp(amount / maxChange, 0.0F, 1.0F);
 
-        particles.add(particle);
-        minecraft.particleEngine.add(particle);
+        // Base colors
+        int yellow = 0xFFFF00; // small change
+        int red = 0xFF0000;    // large damage
+        int green = 0x00FF00;  // large heal
+
+        int color;
+        String healthChangeValue = String.format("%.0f", amount);
+
+        if (diff > 0) {
+            // Damage → blend yellow → red
+            color = lerpColor(yellow, red, intensity);
+            healthChangeValue = "-" + healthChangeValue;
+        } else {
+            // Heal → blend yellow → green
+            color = lerpColor(yellow, green, intensity);
+            healthChangeValue = "+" + healthChangeValue;
+        }
+
+        TextParticle particle = new TextParticle(level, position, velocity,
+                healthChangeValue, Mth.clamp(scaled, 0.02F, 0.045F), color);
+
+        PARTICLES.add(particle);
+        MINECRAFT.particleEngine.add(particle);
     }
 
-    private Vec3 computeVelocity(ClientLevel level, LivingEntity entity, Vec3 particlePos) {
+    /**
+     * Linearly interpolates between two RGB colors.
+     * @param from starting color (ARGB or RGB)
+     * @param to ending color
+     * @param t interpolation factor 0.0–1.0
+     * @return blended color as int
+     */
+    private static int lerpColor(int from, int to, float t) {
+        int r1 = (from >> 16) & 0xFF;
+        int g1 = (from >> 8) & 0xFF;
+        int b1 = from & 0xFF;
+
+        int r2 = (to >> 16) & 0xFF;
+        int g2 = (to >> 8) & 0xFF;
+        int b2 = to & 0xFF;
+
+        int r = (int) Mth.lerp(t, r1, r2);
+        int g = (int) Mth.lerp(t, g1, g2);
+        int b = (int) Mth.lerp(t, b1, b2);
+
+        return (r << 16) | (g << 8) | b;
+    }
+
+    private static void ensureParticleLimit() {
+        int particleLimit = switch (MINECRAFT.options.particles().get()) {
+            case ALL -> 255;
+            case DECREASED -> 127;
+            case MINIMAL -> 63;
+        };
+
+        while (PARTICLES.size() > particleLimit) {
+            TextParticle oldestParticle = PARTICLES.poll();
+            if (oldestParticle != null) oldestParticle.remove();
+        }
+    }
+
+    private static Vec3 computeVelocity(ClientLevel level, LivingEntity entity, Vec3 particlePos) {
         if (level == null) return Vec3.ZERO;
 
         double spread = 0.05;
@@ -45,7 +109,7 @@ public class RenderDamageNumber {
         double upward = 0.1;
         Vec3 velocity = new Vec3(randomX, upward, randomZ);
 
-        Vec3 backward = minecraft.gameRenderer.getMainCamera().getPosition()
+        Vec3 backward = MINECRAFT.gameRenderer.getMainCamera().getPosition()
                 .subtract(particlePos)
                 .normalize()
                 .scale(entity.getBbWidth() * 0.5);

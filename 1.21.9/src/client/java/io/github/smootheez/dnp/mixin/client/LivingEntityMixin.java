@@ -23,8 +23,7 @@ public abstract class LivingEntityMixin {
             float newHealth = entity.getHealth();
 
             if (lastHealth != -1 && lastHealth != newHealth) {
-                RenderDamageNumber renderDamageNumber = new RenderDamageNumber();
-                renderDamageNumber.renderParticleNumber(entity, lastHealth, newHealth);
+                RenderDamageNumber.renderParticleNumber(entity, lastHealth, newHealth);
             }
 
             lastHealth = newHealth;

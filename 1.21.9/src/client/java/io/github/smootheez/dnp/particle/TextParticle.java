@@ -14,14 +14,16 @@ import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.*;
 
 @Environment(EnvType.CLIENT)
-public class NumberParticle extends Particle {
+public class TextParticle extends Particle {
     private final String text;
     private final float initialScale;
+    private final int color;
 
-    public NumberParticle(ClientLevel clientLevel, Vec3 pos, Vec3 velocity, String text, float initialScale) {
+    public TextParticle(ClientLevel clientLevel, Vec3 pos, Vec3 velocity, String text, float initialScale, int color) {
         super(clientLevel, pos.x, pos.y, pos.z, velocity.x, velocity.y, velocity.z);
         this.text = text;
         this.initialScale = initialScale;
+        this.color = color;
         this.gravity = 0;
         this.lifetime = 30;
         DebugMode.sendLoggerInfo("NumberParticle created at " + pos + " with velocity " + velocity);
@@ -44,7 +46,7 @@ public class NumberParticle extends Particle {
         alpha = Mth.clamp(alpha, 0.0f, 1.0f);
 
         int a = (int) (alpha * 255.0f) << 24;
-        int rgb = -65536 & 0x00FFFFFF;
+        int rgb = this.color & 0x00FFFFFF;
         int argbWithAlpha = a | rgb;
 
         font.drawInBatch(
@@ -68,4 +70,3 @@ public class NumberParticle extends Particle {
         return DnpParticleRenderType.NUMBER_RENDER;
     }
 }
-

@@ -11,6 +11,6 @@ public class DnpClient implements ClientModInitializer {
     public void onInitializeClient() {
         Constants.LOGGER.info("Initializing Client " + Constants.MOD_NAME + "(" + Constants.MOD_ID + ")...");
 
-        ParticleRendererRegistry.register(DnpParticleRenderType.NUMBER_RENDER, NumberParticleGroup::new);
+        ParticleRendererRegistry.register(DnpParticleRenderType.NUMBER_RENDER, TextParticleGroup::new);
     }
 }
