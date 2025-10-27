@@ -1,7 +1,9 @@
 package io.github.smootheez.dnp.mixin.client;
 
-import io.github.smootheez.dnp.handler.*;
+import io.github.smootheez.dnp.particle.*;
 import io.github.smootheez.dnp.util.*;
+import net.minecraft.client.*;
+import net.minecraft.client.multiplayer.*;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.*;
 import org.spongepowered.asm.mixin.*;
@@ -27,5 +29,6 @@ public abstract class LivingEntityMixin {
 
         lastHealth = health;
         DebugMode.sendLoggerInfo("Old Health: " + oldHealth + ", New Health: " + health);
+        Minecraft.getInstance().particleEngine.add(new NumberParticle((ClientLevel) level, entity.position(), entity.getDeltaMovement()));
     }
 }
