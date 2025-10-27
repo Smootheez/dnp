@@ -26,6 +26,7 @@
       "io.github.smootheez.dnp.config.DnpConfig"
     ]
   },
+  "accessWidener": "dnp.accesswidener",
   "mixins": [
     {
       "config": "dnp.client.mixins.json",

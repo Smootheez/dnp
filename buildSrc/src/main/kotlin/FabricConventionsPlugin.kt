@@ -35,6 +35,7 @@ class FabricConventionsPlugin : Plugin<Project> {
                         sourceSet(project.extensions.getByType(SourceSetContainer::class.java).getByName("main"))
                         sourceSet(project.extensions.getByType(SourceSetContainer::class.java).getByName("client"))
                     }
+                    accessWidenerPath.set(file("src/main/resources/${modid}.accesswidener"))
                 }
             }
 
