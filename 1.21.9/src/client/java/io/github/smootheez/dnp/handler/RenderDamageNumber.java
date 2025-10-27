@@ -6,7 +6,6 @@ import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.*;
 import net.minecraft.util.*;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.level.*;
 import net.minecraft.world.phys.*;
 
 import java.util.*;
@@ -30,7 +29,8 @@ public class RenderDamageNumber {
         float scaleMultiplier = Mth.sqrt(entity.getBbHeight());
         float scaled = baseScale * scaleMultiplier;
 
-        NumberParticle particle = new NumberParticle(level, position, velocity, String.format("%.0f", Math.abs(diff)), Mth.clamp(scaled, 0.02F, 0.045F));
+        NumberParticle particle = new NumberParticle(level, position, velocity,
+                String.format("%.0f", Math.abs(diff)), Mth.clamp(scaled, 0.02F, 0.045F));
 
         particles.add(particle);
         minecraft.particleEngine.add(particle);

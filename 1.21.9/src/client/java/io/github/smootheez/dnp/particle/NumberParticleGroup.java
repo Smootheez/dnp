@@ -1,5 +1,6 @@
 package io.github.smootheez.dnp.particle;
 
+import com.mojang.blaze3d.vertex.*;
 import io.github.smootheez.dnp.util.*;
 import net.fabricmc.api.*;
 import net.minecraft.client.*;
@@ -18,11 +19,11 @@ public class NumberParticleGroup extends ParticleGroup<NumberParticle> {
     public @NotNull ParticleGroupRenderState extractRenderState(Frustum frustum, Camera camera, float f) {
         return (submitNodeCollector, cameraRenderState) -> {
             DebugMode.sendLoggerInfo("Rendering NumberParticleGroup");
-            for (Particle particle : this.particles) {
-                if (!(particle instanceof NumberParticle numberParticle)) continue;
-                numberParticle.render(camera, f);
+            Minecraft instance = Minecraft.getInstance();
+            this.particles.forEach(particle -> {
+                particle.extract(instance.renderBuffers().bufferSource(), new PoseStack(), instance.font, camera, f);
                 DebugMode.sendLoggerInfo("Rendering particle: " + particle);
-            }
+            });
         };
     }
 }

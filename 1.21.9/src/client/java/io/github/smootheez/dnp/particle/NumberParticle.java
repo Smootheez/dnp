@@ -27,17 +27,12 @@ public class NumberParticle extends Particle {
         DebugMode.sendLoggerInfo("NumberParticle created at " + pos + " with velocity " + velocity);
     }
 
-    public void render(Camera camera, float f) {
+    public void extract(MultiBufferSource.BufferSource multiBufferSource, PoseStack poseStack, Font font, Camera camera, float f) {
         Vec3 cameraPos = camera.getPosition();
 
         float x = (float) (this.xo + (this.x - this.xo) * f - cameraPos.x());
         float y = (float) (this.yo + (this.y - this.yo) * f - cameraPos.y());
         float z = (float) (this.zo + (this.z - this.zo) * f - cameraPos.z());
-
-        Minecraft instance = Minecraft.getInstance();
-        Font font = instance.font;
-        MultiBufferSource.BufferSource bufferSource = instance.renderBuffers().bufferSource();
-        PoseStack poseStack = new PoseStack();
 
         poseStack.pushPose();
         poseStack.translate(x, y, z);
@@ -59,7 +54,7 @@ public class NumberParticle extends Particle {
                 argbWithAlpha,
                 false,
                 poseStack.last().pose(),
-                bufferSource,
+                multiBufferSource,
                 Font.DisplayMode.NORMAL,
                 0,
                 0xF000F0
