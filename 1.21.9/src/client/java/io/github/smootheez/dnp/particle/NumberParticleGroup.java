@@ -18,6 +18,11 @@ public class NumberParticleGroup extends ParticleGroup<NumberParticle> {
     public @NotNull ParticleGroupRenderState extractRenderState(Frustum frustum, Camera camera, float f) {
         return (submitNodeCollector, cameraRenderState) -> {
             DebugMode.sendLoggerInfo("Rendering NumberParticleGroup");
+            for (Particle particle : this.particles) {
+                if (!(particle instanceof NumberParticle numberParticle)) continue;
+                numberParticle.render(camera, f);
+                DebugMode.sendLoggerInfo("Rendering particle: " + particle);
+            }
         };
     }
 }
