@@ -22,6 +22,8 @@ public class NumberParticle extends Particle {
         super(clientLevel, pos.x, pos.y, pos.z, velocity.x, velocity.y, velocity.z);
         this.text = text;
         this.initialScale = initialScale;
+        this.gravity = 0;
+        this.lifetime = 30;
         DebugMode.sendLoggerInfo("NumberParticle created at " + pos + " with velocity " + velocity);
     }
 
@@ -47,7 +49,7 @@ public class NumberParticle extends Particle {
         alpha = Mth.clamp(alpha, 0.0f, 1.0f);
 
         int a = (int) (alpha * 255.0f) << 24;
-        int rgb = -16711936 & 0x00FFFFFF;
+        int rgb = -65536 & 0x00FFFFFF;
         int argbWithAlpha = a | rgb;
 
         font.drawInBatch(
