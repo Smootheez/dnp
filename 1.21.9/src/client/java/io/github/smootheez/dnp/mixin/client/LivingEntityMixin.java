@@ -17,17 +17,15 @@ public abstract class LivingEntityMixin {
     private void onDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
         Level level = entity.level();
-        if (level == null || !level.isClientSide()) return;
+        if (level == null || !level.isClientSide() || !LivingEntity.DATA_HEALTH_ID.equals(key) || entity.tickCount < 1) return;
 
-        if (LivingEntity.DATA_HEALTH_ID.equals(key)) {
-            float newHealth = entity.getHealth();
+        float newHealth = entity.getHealth();
 
-            if (lastHealth != -1 && lastHealth != newHealth) {
-                RenderDamageNumber.renderParticleNumber(entity, lastHealth, newHealth);
-            }
-
-            lastHealth = newHealth;
+        if (lastHealth != -1 && lastHealth != newHealth) {
+            RenderDamageNumber.renderParticleNumber(entity, lastHealth, newHealth);
         }
+
+        lastHealth = newHealth;
     }
 }
 

@@ -30,7 +30,7 @@ public final class RenderDamageNumber {
         float diff = oldHealth - newHealth;
         if (diff == 0) return;
 
-        float baseScale = 0.02F;
+        float baseScale = 0.023F;
         float scaleMultiplier = Mth.sqrt(bbHeight);
         float scaled = baseScale * scaleMultiplier;
 
@@ -45,7 +45,7 @@ public final class RenderDamageNumber {
         int green = 0x00FF00;  // large heal
 
         int color;
-        String healthChangeValue = String.format("%.0f", amount);
+        String healthChangeValue = String.format("%.1f", amount);
 
         if (diff > 0) {
             // Damage → blend yellow → red
