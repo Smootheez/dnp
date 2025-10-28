@@ -1,9 +1,14 @@
 package io.github.smootheez.dnp.handler;
 
+import io.github.smootheez.dnp.config.*;
 import io.github.smootheez.dnp.particle.*;
+import io.github.smootheez.smoothiezapi.config.*;
 import net.fabricmc.api.*;
 import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.*;
+import net.minecraft.client.player.*;
+import net.minecraft.core.registries.*;
+import net.minecraft.resources.*;
 import net.minecraft.util.*;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.phys.*;
@@ -11,15 +16,19 @@ import net.minecraft.world.phys.*;
 import java.util.*;
 
 @Environment(EnvType.CLIENT)
-public final class RenderDamageNumber {
-    private RenderDamageNumber() {}
+public final class HandleTextParticle {
+    private HandleTextParticle() {}
 
     private static final Minecraft MINECRAFT = Minecraft.getInstance();
     private static final Deque<TextParticle> PARTICLES = new ArrayDeque<>();
+    private static final DnpConfig DNP_CONFIG = ConfigManager.getConfig(DnpConfig.class);
 
     public static void renderParticleNumber(LivingEntity entity, float oldHealth, float newHealth) {
+        if (Boolean.FALSE.equals(DNP_CONFIG.getEnableDnp().getValue())) return;
+
         ClientLevel level = (ClientLevel) entity.level();
 
+        if (shouldSkipRendering(entity)) return;
         ensureParticleLimit();
 
         float bbHeight = entity.getBbHeight();
@@ -36,7 +45,7 @@ public final class RenderDamageNumber {
 
         // ----- Dynamic Color Computation -----
         float amount = Math.abs(diff);
-        float maxChange = 10.0F; // you can adjust this threshold for your mod
+        float maxChange = DNP_CONFIG.getDamageThreshold().getValue().floatValue(); // you can adjust this threshold for your mod
         float intensity = Mth.clamp(amount / maxChange, 0.0F, 1.0F);
 
         // Base colors
@@ -62,6 +71,17 @@ public final class RenderDamageNumber {
 
         PARTICLES.add(particle);
         MINECRAFT.particleEngine.add(particle);
+    }
+
+    private static boolean shouldSkipRendering(LivingEntity entity) {
+        LocalPlayer player = MINECRAFT.player;
+        if (entity == player && Boolean.TRUE.equals(DNP_CONFIG.getSelfParticle().getValue())) return true;
+
+        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+        if (DNP_CONFIG.getBlacklist().getValue().values().contains(entityType.toString())) return true;
+
+        int maxDistance = DNP_CONFIG.getParticleRadius().getValue(); // Default max distance is 32
+        return entity.distanceToSqr(player) > maxDistance * maxDistance;
     }
 
     /**

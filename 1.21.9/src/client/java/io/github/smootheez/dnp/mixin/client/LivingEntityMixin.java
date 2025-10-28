@@ -1,6 +1,7 @@
 package io.github.smootheez.dnp.mixin.client;
 
 import io.github.smootheez.dnp.handler.*;
+import net.fabricmc.api.*;
 import net.minecraft.network.syncher.*;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.*;
@@ -8,6 +9,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
+@Environment(EnvType.CLIENT)
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
     @Unique
@@ -22,7 +24,7 @@ public abstract class LivingEntityMixin {
         float newHealth = entity.getHealth();
 
         if (lastHealth != -1 && lastHealth != newHealth) {
-            RenderDamageNumber.renderParticleNumber(entity, lastHealth, newHealth);
+            HandleTextParticle.renderParticleNumber(entity, lastHealth, newHealth);
         }
 
         lastHealth = newHealth;
