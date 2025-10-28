@@ -1,0 +1,14 @@
+{
+  "config.screen.dnp.title": "ダメージ数値パーティクル設定",
+
+  "config.widget.dnp.debug_mode": "デバッグモード",
+  "config.widget.dnp.enable_dnp": "ダメージ数値パーティクルを有効にする",
+  "config.widget.dnp.self_particle": "セルフパーティクル",
+  "config.widget.dnp.self_particle.description": "有効にすると、自分に与えられたダメージ/回復のパーティクルが表示されます。",
+  "config.widget.dnp.damage_threshold": "ダメージしきい値",
+  "config.widget.dnp.damage_threshold.description": "色のスケーリングに使用される最大体力変化値。値が高いほど、同じ体力変化でも色の変化が緩やかになります。",
+  "config.widget.dnp.particle_radius": "パーティクル半径",
+  "config.widget.dnp.particle_radius.description": "パーティクルがレンダリングされるプレイヤーからの最大距離。",
+  "config.widget.dnp.blacklist": "ブラックリスト",
+  "config.widget.dnp.blacklist.description": "ダメージ数値パーティクルが表示されないエンティティタイプのリスト。リソースの場所を使用します（例：「minecraft:zombie」）。"
+}

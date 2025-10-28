@@ -1,0 +1,14 @@
+{
+  "config.screen.dnp.title": "Damage Number Particles Config",
+
+  "config.widget.dnp.debug_mode": "Debug Mode",
+  "config.widget.dnp.enable_dnp": "Enable Damage Number Particles",
+  "config.widget.dnp.self_particle": "Self Particle",
+  "config.widget.dnp.self_particle.description": "If enabled, particles will be shown for damage/healing dealt to yourself.",
+  "config.widget.dnp.damage_threshold": "Damage Threshold",
+  "config.widget.dnp.damage_threshold.description": "The maximum health change value used for color scaling. Higher values will make colors change less dramatically for the same health change.",
+  "config.widget.dnp.particle_radius": "Particle Radius",
+  "config.widget.dnp.particle_radius.description": "The maximum distance from the player that particles will be rendered.",
+  "config.widget.dnp.blacklist": "Blacklist",
+  "config.widget.dnp.blacklist.description": "A list of entity types for which damage number particles will not be displayed. Use resource locations (e.g., 'minecraft:zombie')."
+}
