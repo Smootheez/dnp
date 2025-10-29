@@ -22,8 +22,22 @@ public final class HandleTextParticle {
     private static final Minecraft MINECRAFT = Minecraft.getInstance();
     private static final Deque<TextParticle> PARTICLES = new ArrayDeque<>();
     private static final DnpConfig DNP_CONFIG = ConfigManager.getConfig(DnpConfig.class);
+    private static final Map<LivingEntity, Float> LAST_HEALTH_MAP = new WeakHashMap<>();
 
-    public static void renderParticleNumber(LivingEntity entity, float oldHealth, float newHealth) {
+    public static void onHealthChange(LivingEntity entity) {
+        if (Boolean.FALSE.equals(DNP_CONFIG.getEnableDnp().getValue())) return;
+
+        float newHealth = entity.getHealth();
+
+        Float oldHealth = LAST_HEALTH_MAP.get(entity);
+
+        if (oldHealth != null && oldHealth != newHealth)
+            renderParticleNumber(entity, oldHealth, newHealth);
+
+        LAST_HEALTH_MAP.put(entity, newHealth);
+    }
+
+    private static void renderParticleNumber(LivingEntity entity, float oldHealth, float newHealth) {
         if (Boolean.FALSE.equals(DNP_CONFIG.getEnableDnp().getValue())) return;
 
         ClientLevel level = (ClientLevel) entity.level();
