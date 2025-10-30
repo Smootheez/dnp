@@ -17,7 +17,8 @@ public abstract class LivingEntityMixin {
 
         // We only care about the health data changing on the client
         // Let our dedicated handler manage the logic and state
-        if (entity.level().isClientSide() && LivingEntity.DATA_HEALTH_ID.equals(key)) HandleTextParticle.onHealthChange(entity);
+        if (entity.level().isClientSide() && LivingEntityAccessor.getHealthId().equals(key))
+            HandleTextParticle.onHealthChange(entity);
     }
 }
 
