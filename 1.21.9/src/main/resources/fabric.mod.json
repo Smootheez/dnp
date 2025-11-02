@@ -27,10 +27,7 @@
     ]
   },
   "mixins": [
-    {
-      "config": "dnp.client.mixins.json",
-      "environment": "client"
-    }
+    "dnp.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",

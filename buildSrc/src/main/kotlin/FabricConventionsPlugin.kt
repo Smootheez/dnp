@@ -3,10 +3,10 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -27,14 +27,10 @@ class FabricConventionsPlugin : Plugin<Project> {
 
             version = "${modVersion}+${minecraftVersion}"
 
-            // Configure Loom
+            // Configure loom
             extensions.configure<LoomGradleExtensionAPI>("loom") {
-                splitEnvironmentSourceSets()
-                mods {
-                    create(modid) {
-                        sourceSet(project.extensions.getByType(SourceSetContainer::class.java).getByName("main"))
-                        sourceSet(project.extensions.getByType(SourceSetContainer::class.java).getByName("client"))
-                    }
+                (extensions["loom"] as LoomGradleExtensionAPI).apply {
+                    mixin.defaultRefmapName.set("${modid}-refmap.json")
                 }
             }
 

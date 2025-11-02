@@ -1,4 +1,4 @@
-package io.github.smootheez.dnp.mixin.client;
+package io.github.smootheez.dnp.mixin;
 
 import io.github.smootheez.dnp.handler.*;
 import net.fabricmc.api.*;

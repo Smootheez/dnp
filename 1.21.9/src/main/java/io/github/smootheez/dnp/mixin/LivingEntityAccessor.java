@@ -1,4 +1,4 @@
-package io.github.smootheez.dnp.mixin.client;
+package io.github.smootheez.dnp.mixin;
 
 import net.fabricmc.api.*;
 import net.minecraft.network.syncher.*;
