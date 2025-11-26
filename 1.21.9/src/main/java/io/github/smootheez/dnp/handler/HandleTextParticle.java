@@ -3,6 +3,7 @@ package io.github.smootheez.dnp.handler;
 import io.github.smootheez.dnp.config.*;
 import io.github.smootheez.dnp.particle.*;
 import io.github.smootheez.smoothiezapi.config.*;
+import io.github.smootheez.smoothiezapi.util.*;
 import net.fabricmc.api.*;
 import net.minecraft.client.*;
 import net.minecraft.client.multiplayer.*;
@@ -72,11 +73,11 @@ public final class HandleTextParticle {
 
         if (diff > 0) {
             // Damage → blend yellow → red
-            color = lerpColor(yellow, red, intensity);
+            color = ColorUtils.lerpRGB(yellow, red, intensity);
             healthChangeValue = "-" + healthChangeValue;
         } else {
             // Heal → blend yellow → green
-            color = lerpColor(yellow, green, intensity);
+            color = ColorUtils.lerpRGB(yellow, green, intensity);
             healthChangeValue = "+" + healthChangeValue;
         }
 
@@ -96,29 +97,6 @@ public final class HandleTextParticle {
 
         int maxDistance = DNP_CONFIG.getParticleRadius().getValue(); // Default max distance is 32
         return entity.distanceToSqr(player) > maxDistance * maxDistance;
-    }
-
-    /**
-     * Linearly interpolates between two RGB colors.
-     * @param from starting color (ARGB or RGB)
-     * @param to ending color
-     * @param t interpolation factor 0.0–1.0
-     * @return blended color as int
-     */
-    private static int lerpColor(int from, int to, float t) {
-        int r1 = (from >> 16) & 0xFF;
-        int g1 = (from >> 8) & 0xFF;
-        int b1 = from & 0xFF;
-
-        int r2 = (to >> 16) & 0xFF;
-        int g2 = (to >> 8) & 0xFF;
-        int b2 = to & 0xFF;
-
-        int r = (int) Mth.lerp(t, r1, r2);
-        int g = (int) Mth.lerp(t, g1, g2);
-        int b = (int) Mth.lerp(t, b1, b2);
-
-        return (r << 16) | (g << 8) | b;
     }
 
     private static void ensureParticleLimit() {
