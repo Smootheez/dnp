@@ -1,0 +1,133 @@
+package io.github.smootheez.dnp.handler;
+
+import io.github.smootheez.dnp.config.*;
+import io.github.smootheez.dnp.particle.*;
+import io.github.smootheez.smoothiezapi.config.*;
+import io.github.smootheez.smoothiezapi.util.*;
+import net.fabricmc.api.*;
+import net.minecraft.client.*;
+import net.minecraft.client.multiplayer.*;
+import net.minecraft.client.player.*;
+import net.minecraft.core.registries.*;
+import net.minecraft.util.*;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.phys.*;
+
+import java.util.*;
+
+@Environment(EnvType.CLIENT)
+public final class HandleTextParticle {
+    private HandleTextParticle() {}
+
+    private static final Minecraft MINECRAFT = Minecraft.getInstance();
+    private static final Deque<TextParticle> PARTICLES = new ArrayDeque<>();
+    private static final DnpConfig DNP_CONFIG = ConfigManager.getConfig(DnpConfig.class);
+    private static final Map<LivingEntity, Float> LAST_HEALTH_MAP = new WeakHashMap<>();
+
+    public static void onHealthChange(LivingEntity entity) {
+        if (Boolean.FALSE.equals(DNP_CONFIG.getEnableDnp().getValue())) return;
+
+        float newHealth = entity.getHealth();
+
+        Float oldHealth = LAST_HEALTH_MAP.get(entity);
+
+        if (oldHealth != null && oldHealth != newHealth)
+            renderParticleNumber(entity, oldHealth, newHealth);
+
+        LAST_HEALTH_MAP.put(entity, newHealth);
+    }
+
+    private static void renderParticleNumber(LivingEntity entity, float oldHealth, float newHealth) {
+        if (Boolean.FALSE.equals(DNP_CONFIG.getEnableDnp().getValue())) return;
+
+        ClientLevel level = (ClientLevel) entity.level();
+
+        if (shouldSkipRendering(entity)) return;
+        ensureParticleLimit();
+
+        float bbHeight = entity.getBbHeight();
+        double yOffset = Mth.clamp(bbHeight * 0.55, 1.0, 4.0);
+        Vec3 position = entity.position().add(0.0, yOffset, 0.0);
+        Vec3 velocity = computeVelocity(level, entity, position);
+
+        float diff = oldHealth - newHealth;
+        if (diff == 0) return;
+
+        float baseScale = 0.023F;
+        float scaleMultiplier = Mth.sqrt(bbHeight);
+        float scaled = baseScale * scaleMultiplier;
+
+        // ----- Dynamic Color Computation -----
+        float amount = Math.abs(diff);
+        float maxChange = DNP_CONFIG.getDamageThreshold().getValue().floatValue(); // you can adjust this threshold for your mod
+        float intensity = Mth.clamp(amount / maxChange, 0.0F, 1.0F);
+
+        // Base colors
+        int yellow = 0xFFFF00; // small change
+        int red = 0xFF0000;    // large damage
+        int green = 0x00FF00;  // large heal
+
+        int color;
+        String healthChangeValue = String.format("%.1f", amount);
+
+        if (diff > 0) {
+            // Damage → blend yellow → red
+            color = ColorUtils.lerpRGB(yellow, red, intensity);
+            healthChangeValue = "-" + healthChangeValue;
+        } else {
+            // Heal → blend yellow → green
+            color = ColorUtils.lerpRGB(yellow, green, intensity);
+            healthChangeValue = "+" + healthChangeValue;
+        }
+
+        TextParticle particle = new TextParticle(level, position, velocity,
+                healthChangeValue, Mth.clamp(scaled, 0.02F, 0.045F), color);
+
+        PARTICLES.add(particle);
+        MINECRAFT.particleEngine.add(particle);
+    }
+
+    private static boolean shouldSkipRendering(LivingEntity entity) {
+        LocalPlayer player = MINECRAFT.player;
+        if (entity == player && Boolean.TRUE.equals(DNP_CONFIG.getSelfParticle().getValue())) return true;
+
+        var entityType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+        if (DNP_CONFIG.getBlacklist().getValue().values().contains(entityType.toString())) return true;
+
+        int maxDistance = DNP_CONFIG.getParticleRadius().getValue(); // Default max distance is 32
+
+        if (player == null) return false;
+        return entity.distanceToSqr(player) > maxDistance * maxDistance;
+    }
+
+    private static void ensureParticleLimit() {
+        int particleLimit = switch (MINECRAFT.options.particles().get()) {
+            case ALL -> 255;
+            case DECREASED -> 127;
+            case MINIMAL -> 63;
+        };
+
+        while (PARTICLES.size() > particleLimit) {
+            TextParticle oldestParticle = PARTICLES.poll();
+            if (oldestParticle != null) oldestParticle.remove();
+        }
+    }
+
+    private static Vec3 computeVelocity(ClientLevel level, LivingEntity entity, Vec3 particlePos) {
+        if (level == null) return Vec3.ZERO;
+
+        double spread = 0.05;
+        double randomX = (level.random.nextDouble() - 0.5) * spread;
+        double randomZ = (level.random.nextDouble() - 0.5) * spread;
+        double upward = 0.1;
+        Vec3 velocity = new Vec3(randomX, upward, randomZ);
+
+        Vec3 backward = MINECRAFT.gameRenderer.getMainCamera().position()
+                .subtract(particlePos)
+                .normalize()
+                .scale(entity.getBbWidth() * 0.5);
+
+        return velocity.add(backward.x, 0.1, backward.z);
+    }
+
+}

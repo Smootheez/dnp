@@ -43,7 +43,7 @@ mcModPublisher {
     releaseType = modReleaseType
     changelog = file("../changelogs/$modMinecraftVersion.md").readText()
     files.from(tasks.named("remapJar"))
-    gameVersions.addAll(listOf("1.21.9", "1.21.10"))
+    gameVersions.addAll(listOf("1.21.11"))
     loaders.addAll(listOf(LoaderType.FABRIC))
 
     curseforge {

@@ -7,8 +7,10 @@ repositories {
     maven("https://maven.fabricmc.net/")
 }
 
+val loomVersion = "1.14-SNAPSHOT"
+
 dependencies {
-    implementation("net.fabricmc:fabric-loom:1.11-SNAPSHOT")
+    implementation("net.fabricmc:fabric-loom:${loomVersion}")
 }
 
 gradlePlugin {

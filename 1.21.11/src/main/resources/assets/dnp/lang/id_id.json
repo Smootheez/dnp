@@ -1,0 +1,14 @@
+{
+  "config.screen.dnp.title": "Konfigurasi Partikel Angka Kerusakan",
+
+  "config.widget.dnp.debug_mode": "Mode Debug",
+  "config.widget.dnp.enable_dnp": "Aktifkan Partikel Angka Kerusakan",
+  "config.widget.dnp.self_particle": "Partikel Diri Sendiri",
+  "config.widget.dnp.self_particle.description": "Jika diaktifkan, partikel akan ditampilkan untuk kerusakan/penyembuhan yang diberikan pada diri sendiri.",
+  "config.widget.dnp.damage_threshold": "Ambang Kerusakan",
+  "config.widget.dnp.damage_threshold.description": "Nilai perubahan kesehatan maksimum yang digunakan untuk penskalaan warna. Nilai yang lebih tinggi akan membuat warna berubah tidak terlalu dramatis untuk perubahan kesehatan yang sama.",
+  "config.widget.dnp.particle_radius": "Radius Partikel",
+  "config.widget.dnp.particle_radius.description": "Jarak maksimum dari pemain di mana partikel akan dirender.",
+  "config.widget.dnp.blacklist": "Daftar Hitam",
+  "config.widget.dnp.blacklist.description": "Daftar jenis entitas yang partikel angka kerusakannya tidak akan ditampilkan. Gunakan lokasi sumber daya (mis., 'minecraft:zombie')."
+}

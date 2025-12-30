@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "${modid}",
+  "version": "${modVersion}+${minecraftVersion}",
+  "icon": "assets/dnp/icon.png",
+  "name": "${modName}",
+  "description": "${modDescription}",
+  "license": "${modLicense}",
+  "authors": [
+    "Smootheez"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Smootheez/dnp",
+    "sources": "https://github.com/Smootheez/dnp",
+    "issues": "https://github.com/Smootheez/dnp/issues"
+  },
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "io.github.smootheez.dnp.Dnp"
+    ],
+    "client": [
+      "io.github.smootheez.dnp.DnpClient"
+    ],
+    "smoothiezapi": [
+      "io.github.smootheez.dnp.config.DnpConfig"
+    ]
+  },
+  "mixins": [
+    "dnp.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loaderVersion}",
+    "minecraft": ">=${minecraftVersion}",
+    "smoothiezapi": ">=${smoothiezApiVersion}",
+    "fabric": ">=${fabricVersion}"
+  }
+}
